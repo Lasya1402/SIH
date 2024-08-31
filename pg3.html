@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Page 3</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .form-page {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .form-group {
+            flex: 1 1 45%;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .required {
+            color: red;
+        }
+
+        .info-icon {
+            font-style: italic;
+            color: grey;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .form-control:invalid {
+            border-color: red;
+        }
+
+        .form-control option {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .form-control option.special {
+            color: red;
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .buttons button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            color: #fff;
+        }
+
+        .buttons .prev-button {
+            background-color: #007bff;
+        }
+
+        .buttons .next-button {
+            background-color: #ff5722;
+        }
+
+        .floating-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #ff5722;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .floating-button img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-page">
+        <div class="form-group">
+            <label for="industry">Industry <span class="required">*</span><span class="info-icon">i</span></label>
+            <select id="industry" class="form-control" required>
+                <option value="" disabled selected>Select</option>
+                <option>Private Limited Company</option>
+                <option>Limited Liability Partnership</option>
+                <option class="special">Registered Partnership</option>
+            </select>
+            <span class="error">This field cannot be left blank.</span>
+        </div>
+
+        <div class="form-group">
+            <label for="startup-category">Category<span class="required">*</span></label>
+            <select id="startup-category" name="startup-category" class="form-control" required>
+                <option value="">Select a category</option>
+                <option value="Ayurveda">Ayurveda</option>
+                <option value="Yoga">Yoga</option>
+                <option value="Unani">Unani</option>
+                <option value="Siddha">Siddha</option>
+                <option value="Healthcare">Healthcare</option>
+            </select>
+            <span class="error">This field cannot be left blank.</span>
+        </div>
+
+        <div class="form-group">
+            <label for="services">Services <span class="required">*</span><span class="info-icon">i</span></label>
+            <select id="services" class="form-control" required>
+                <option value="" disabled selected>Select</option>
+                <option value="ayurvedic_medicine">Ayurvedic Medicine</option>
+                <option value="yoga_therapy">Yoga Therapy</option>
+                <option value="siddha_treatment">Siddha Treatment</option>
+                <option value="naturopathy">Naturopathy</option>
+                <option value="holistic_healthcare">Holistic Healthcare</option>
+                <option value="panchakarma_treatment">Panchakarma Treatment</option>
+                <option value="wellness_programs">Wellness Programs</option>
+                <option value="herbal_medicine">Herbal Medicine</option>
+                <option value="health_consultation">Health Consultation</option>
+                <option value="therapeutic_diet">Therapeutic Diet</option>
+            </select>
+            <span class="error">This field cannot be left blank.</span>
+        </div>
+        
+        <div class="form-group">
+            <label for="udyogAdhaar">Udyog Adhaar <span class="info-icon">i</span></label>
+            <input type="text" id="udyogAdhaar" class="form-control">
+        </div>
+
+        <div class="buttons">
+            <button class="prev-button" onclick="goToPreviousPage()">Previous</button>
+            <button class="next-button" onclick="goToNextPage()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        // Navigation logic for Previous and Next buttons
+        function goToPreviousPage() {
+            // Logic for navigating to the previous page
+            alert('Previous button clicked');
+        }
+
+        function goToNextPage() {
+            // Logic for navigating to the next page
+            alert('Next button clicked');
+        }
+
+        // Action for the floating button
+        function floatingButtonAction() {
+            alert('Floating button clicked');
+        }
+    </script>
+
+</body>
+</html>
