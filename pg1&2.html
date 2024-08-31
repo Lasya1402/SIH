@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Step Startup Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .step-header div {
+            text-align: center;
+            width: 24%;
+            cursor: pointer;
+        }
+
+        .step-header div.active {
+            color: #2196F3;
+            font-weight: bold;
+        }
+
+        .step-header div::before {
+            content: attr(data-step);
+            display: block;
+            background-color: #e0e0e0;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            line-height: 25px;
+            margin: 0 auto 10px;
+        }
+
+        .step-header div.active::before {
+            background-color: #2196F3;
+        }
+
+        .form-page {
+            display: none;
+        }
+
+        .form-page.active {
+            display: block;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.inline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-group.inline .logo-placeholder {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #ccc;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .form-group.inline .logo-placeholder input[type="file"] {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .form-group.inline {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .form-group.inline label {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .form-group.inline .brief-placeholder {
+            width: 150px;
+            height: 100px;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #ccc;
+            cursor: pointer;
+            background-color: #fef6f6;
+            margin-top: 10px;
+        }
+
+        .stage-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .stage-button {
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .stage-button.active {
+            border-color: #007bff;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .radio-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .radio-buttons label {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .radio-buttons label:last-child {
+            margin-right: 0;
+        }
+
+        .radio-buttons input {
+            margin-right: 5px;
+        }
+
+        .form-footer {
+            text-align: right;
+        }
+
+        .btn-next,
+        .btn-prev {
+            background-color: #FF5722;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-prev {
+            background-color: #2196F3;
+        }
+
+        .btn-next:hover,
+        .btn-prev:hover {
+            opacity: 0.8;
+        }
+
+        .accessibility-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .accessibility-buttons button {
+            background-color: #2196F3;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .accessibility-buttons button:last-child {
+            background-color: #FF5722;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="step-header">
+            <div data-step="1" class="active" onclick="showPage(1)">About Startup</div>
+            <div data-step="2" onclick="showPage(2)">Contact Info</div>
+            <div data-step="3" onclick="showPage(3)">Category</div>
+            <div data-step="4" onclick="showPage(4)">Your Interest</div>
+        </div>
+
+        <!-- Page 1 -->
+        <div class="form-page active" id="page-1">
+            <div class="form-group inline">
+                <div class="logo-placeholder">
+                    Company Logo
+                    <input type="file" accept="image/*">
+                </div>
+
+
+                <div>
+                    <label>Stage*</label>
+                    <div class="stage-buttons">
+                        <button class="stage-button" data-stage="Ideation">Ideation</button>
+                        <button class="stage-button" data-stage="Validation">Validation</button>
+                        <button class="stage-button" data-stage="Early Traction">Early Traction</button>
+                        <button class="stage-button" data-stage="Scaling">Scaling</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group inline">
+                <label for="brief-attachment">Attach a file for Brief</label>
+                <div class="brief-placeholder" id="brief-upload-placeholder">
+                    Click or drag a file to upload
+                </div>
+                <input type="file" id="brief-attachment" name="brief-attachment" accept=".pdf,.doc,.docx,.txt" style="display: none;">
+            </div>
+            
+            <div class="form-group">
+                <label for="name">Name <span style="color: red;">*</span></label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email <span style="color: red;">*</span></label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+           
+
+            <div class="form-group">
+                <label for="startup-name">Startup Name <span style="color: red;">*</span></label>
+                <input type="text" id="startup-name" name="startup-name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="founder-name">Founder Name <span style="color: red;">*</span></label>
+                <input type="text" id="founder-name" name="founder-name" required>
+            </div>
+            <div class="form-group">
+                <label>Is this your company/institution logo?</label>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label for="date-of-establishment">Date of Establishment <span style="color: red;">*</span></label>
+                <input type="date" id="date-of-establishment" name="date-of-establishment" required>
+            </div>
+
+            
+        </div>
+
+        <!-- Page 2 -->
+        <div class="form-page" id="page-2">
+            <div class="form-group">
+                <label for="email">Email*</label>
+                <input type="email" id="email" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="mobile">Mobile*</label>
+                <input type="tel" id="mobile" placeholder="Enter your mobile number">
+            </div>
+            <div class="form-group">
+                <label for="state">State*</label>
+                <select id="state">
+                    <option value="" disabled selected>Select your state</option>
+                    <!-- States of India -->
+                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                    <option value="Assam">Assam</option>
+                    <option value="Bihar">Bihar</option>
+                    <option value="Chhattisgarh">Chhattisgarh</option>
+                    <option value="Goa">Goa</option>
+                    <option value="Gujarat">Gujarat</option>
+                    <option value="Haryana">Haryana</option>
+                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                    <option value="Jharkhand">Jharkhand</option>
+                    <option value="Karnataka">Karnataka</option>
+                    <option value="Kerala">Kerala</option>
+                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Manipur">Manipur</option>
+                    <option value="Meghalaya">Meghalaya</option>
+                    <option value="Mizoram">Mizoram</option>
+                    <option value="Nagaland">Nagaland</option>
+                    <option value="Odisha">Odisha</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Rajasthan">Rajasthan</option>
+                    <option value="Sikkim">Sikkim</option>
+                    <option value="Tamil Nadu">Tamil Nadu</option>
+                    <option value="Telangana">Telangana</option>
+                    <option value="Tripura">Tripura</option>
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                    <option value="Uttarakhand">Uttarakhand</option>
+                    <option value="West Bengal">West Bengal</option>
+                    <!-- Union Territories of India -->
+                    <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                    <option value="Chandigarh">Chandigarh</option>
+                    <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                    <option value="Lakshadweep">Lakshadweep</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Puducherry">Puducherry</option>
+                    <option value="Ladakh">Ladakh</option>
+                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                </select>
+                
+            </div>
+            <div class="form-group">
+                <label for="city">City*</label>
+                <select id="city">
+                    <option value="" disabled selected>Select your city</option>
+                    <!-- Andhra Pradesh -->
+                    <option value="Amaravati">Amaravati</option>
+                    <option value="Visakhapatnam">Visakhapatnam</option>
+                    <option value="Vijayawada">Vijayawada</option>
+                    <option value="Guntur">Guntur</option>
+                    <!-- Arunachal Pradesh -->
+                    <option value="Itanagar">Itanagar</option>
+                    <option value="Tawang">Tawang</option>
+                    <option value="Ziro">Ziro</option>
+                    <!-- Assam -->
+                    <option value="Guwahati">Guwahati</option>
+                    <option value="Dibrugarh">Dibrugarh</option>
+                    <option value="Tezpur">Tezpur</option>
+                    <!-- Bihar -->
+                    <option value="Patna">Patna</option>
+                    <option value="Gaya">Gaya</option>
+                    <option value="Bhagalpur">Bhagalpur</option>
+                    <!-- Chandigarh -->
+                    <option value="Chandigarh">Chandigarh</option>
+                    <!-- Chhattisgarh -->
+                    <option value="Raipur">Raipur</option>
+                    <option value="Bilaspur">Bilaspur</option>
+                    <option value="Durg">Durg</option>
+                    <!-- Delhi -->
+                    <option value="Delhi">Delhi</option>
+                    <!-- Goa -->
+                    <option value="Panaji">Panaji</option>
+                    <option value="Margao">Margao</option>
+                    <option value="Vasco da Gama">Vasco da Gama</option>
+                    <!-- Gujarat -->
+                    <option value="Ahmedabad">Ahmedabad</option>
+                    <option value="Surat">Surat</option>
+                    <option value="Vadodara">Vadodara</option>
+                    <option value="Rajkot">Rajkot</option>
+                    <!-- Haryana -->
+                    <option value="Gurugram">Gurugram</option>
+                    <option value="Faridabad">Faridabad</option>
+                    <option value="Panipat">Panipat</option>
+                    <!-- Himachal Pradesh -->
+                    <option value="Shimla">Shimla</option>
+                    <option value="Manali">Manali</option>
+                    <option value="Dharamshala">Dharamshala</option>
+                    <!-- Jharkhand -->
+                    <option value="Ranchi">Ranchi</option>
+                    <option value="Jamshedpur">Jamshedpur</option>
+                    <option value="Dhanbad">Dhanbad</option>
+                    <!-- Karnataka -->
+                    <option value="Bengaluru">Bengaluru</option>
+                    <option value="Mysuru">Mysuru</option>
+                    <option value="Mangaluru">Mangaluru</option>
+                    <!-- Kerala -->
+                    <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                    <option value="Kochi">Kochi</option>
+                    <option value="Kozhikode">Kozhikode</option>
+                    <!-- Madhya Pradesh -->
+                    <option value="Bhopal">Bhopal</option>
+                    <option value="Indore">Indore</option>
+                    <option value="Gwalior">Gwalior</option>
+                    <!-- Maharashtra -->
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Pune">Pune</option>
+                    <option value="Nagpur">Nagpur</option>
+                    <!-- Manipur -->
+                    <option value="Imphal">Imphal</option>
+                    <!-- Meghalaya -->
+                    <option value="Shillong">Shillong</option>
+                    <!-- Mizoram -->
+                    <option value="Aizawl">Aizawl</option>
+                    <!-- Nagaland -->
+                    <option value="Kohima">Kohima</option>
+                    <option value="Dimapur">Dimapur</option>
+                    <!-- Odisha -->
+                    <option value="Bhubaneswar">Bhubaneswar</option>
+                    <option value="Cuttack">Cuttack</option>
+                    <option value="Rourkela">Rourkela</option>
+                    <!-- Punjab -->
+                    <option value="Amritsar">Amritsar</option>
+                    <option value="Ludhiana">Ludhiana</option>
+                    <option value="Jalandhar">Jalandhar</option>
+                    <!-- Rajasthan -->
+                    <option value="Jaipur">Jaipur</option>
+                    <option value="Jodhpur">Jodhpur</option>
+                    <option value="Udaipur">Udaipur</option>
+                    <!-- Sikkim -->
+                    <option value="Gangtok">Gangtok</option>
+                    <!-- Tamil Nadu -->
+                    <option value="Chennai">Chennai</option>
+                    <option value="Coimbatore">Coimbatore</option>
+                    <option value="Madurai">Madurai</option>
+                    <!-- Telangana -->
+                    <option value="Hyderabad">Hyderabad</option>
+                    <option value="Warangal">Warangal</option>
+                    <option value="Nizamabad">Nizamabad</option>
+                    <!-- Tripura -->
+                    <option value="Agartala">Agartala</option>
+                    <!-- Uttar Pradesh -->
+                    <option value="Lucknow">Lucknow</option>
+                    <option value="Kanpur">Kanpur</option>
+                    <option value="Varanasi">Varanasi</option>
+                    <!-- Uttarakhand -->
+                    <option value="Dehradun">Dehradun</option>
+                    <option value="Haridwar">Haridwar</option>
+                    <!-- West Bengal -->
+                    <option value="Kolkata">Kolkata</option>
+                    <option value="Darjeeling">Darjeeling</option>
+                    <option value="Howrah">Howrah</option>
+                </select>
+                
+                </select>
+                
+            </div>
+            <div class="form-group">
+                <label for="website">Website</label>
+                <input type="url" id="website" placeholder="Enter your website URL (optional)">
+            </div>
+            
+        </div>
+
+        <!-- Page 3 -->
+
+        
+       
+
+            <div class="form-footer">
+                <button class="btn-prev" onclick="prevPage()">Previous</button>
+                <button class="btn-next" onclick="nextPage()">Next</button>
+            </div>
+        </div>
+
+
+    <div class="accessibility-buttons">
+        <button onclick="increaseFontSize()">A+</button>
+        <button onclick="decreaseFontSize()">A-</button>
+    </div>
+
+    <script>
+        let currentPage = 1;
+
+        function showPage(page) {
+            document.querySelectorAll('.form-page').forEach((page) => {
+                page.classList.remove('active');
+            });
+            document.getElementById('page-' + page).classList.add('active');
+
+            document.querySelectorAll('.step-header div').forEach((step) => {
+                step.classList.remove('active');
+            });
+            document.querySelector('.step-header div[data-step="' + page + '"]').classList.add('active');
+
+            currentPage = page;
+        }
+
+        function nextPage() {
+            if (currentPage < 4) {
+                showPage(currentPage + 1);
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                showPage(currentPage - 1);
+            }
+        }
+
+        function submitForm() {
+            alert('Form submitted successfully!');
+        }
+
+        function increaseFontSize() {
+            document.body.style.fontSize = 'larger';
+        }
+
+        function decreaseFontSize() {
+            document.body.style.fontSize = 'smaller';
+        }
+
+        document.querySelector('.brief-placeholder').addEventListener('click', function() {
+            document.getElementById('brief-attachment').click();
+        });
+
+        document.getElementById('brief-attachment').addEventListener('change', function() {
+            const fileName = this.files[0].name;
+            document.getElementById('brief-upload-placeholder').textContent = fileName;
+        });
+
+        document.querySelectorAll('.stage-button').forEach((button) => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.stage-button').forEach((btn) => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
